@@ -1,0 +1,47 @@
+body {
+  overflow: hidden;
+}
+
+/* Icon */
+
+.fa-angle-right {
+  cursor: pointer;
+  font-size: 2rem;
+  margin-left: 1rem;
+  transform: translateY(3px);
+  transition: all 0.2s;
+}
+
+.fa-angle-right:hover {
+  transform: scale(1.1) translateY(3px);
+  text-shadow: 0px 0px 2px #fff;
+}
+
+/* Text */
+
+.text--table {
+  display: grid;
+  grid-auto-flow: column;
+  margin-top: 4rem;
+  grid-template-columns: repeat(2, 20rem);
+  grid-template-rows: repeat(6, 5rem);
+}
+
+.text--name {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 1.3rem;
+}
+
+.text--job {
+  opacity: 80%;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.text--career {
+  margin-top: 6rem;
+}
+
+
+/*# sourceMappingURL=/people.cd0a39e8.css.map */
