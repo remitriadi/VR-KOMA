@@ -125,7 +125,6 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 var page_transition = document.querySelectorAll('.visibility-transition');
-console.log(page_transition);
 
 var _iterator = _createForOfIteratorHelper(page_transition),
     _step;
@@ -168,7 +167,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56145" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55078" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

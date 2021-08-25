@@ -45223,7 +45223,7 @@ function () {
       for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var ui = _step.value;
         ui.style.opacity = 0.9;
-      } // Emptying texture if file isn't in folder
+      } //Load textures
 
     } catch (err) {
       _iterator.e(err);
@@ -45231,63 +45231,62 @@ function () {
       _iterator.f();
     }
 
-    function emptying(texture_array) {
-      count = 0;
+    texture_base_color = textures360_daylight[coordinates];
+    texture_depth = textures360_depth[coordinates];
+    textures360 = [].concat(textures360_daylight);
+    material_360_1.uniforms.u_texture_base_color.value = textures360[coordinates];
+    material_360_2.uniforms.u_texture_base_color.value = textures360[coordinates];
+    material_360_1.uniforms.u_texture_depth.value = textures360_depth[coordinates];
+    material_360_2.uniforms.u_texture_depth.value = textures360_depth[coordinates]; //Filter all textures
 
-      var _iterator2 = _createForOfIteratorHelper(texture_array),
+    function textureFilter(array) {
+      var _iterator2 = _createForOfIteratorHelper(array),
           _step2;
 
       try {
         for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var texture = _step2.value;
+          var tex = _step2.value;
 
-          if (texture) {
-            if (!texture.image) {
-              texture_array[count] = null;
-            }
+          if (tex) {
+            tex.minFilter = THREE.NearestFilter;
+            tex.generateMipmaps = false;
+            tex.flipY = false;
+            tex.sRGBEncoding = THREE.sRGBEncoding;
           }
-
-          count += 1;
         }
       } catch (err) {
         _iterator2.e(err);
       } finally {
         _iterator2.f();
       }
-
-      var _iterator3 = _createForOfIteratorHelper(texture_array),
-          _step3;
-
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var _texture = _step3.value;
-
-          if (_texture) {
-            _texture.minFilter = THREE.NearestFilter;
-            _texture.generateMipmaps = false;
-            _texture.flipY = false;
-            _texture.sRGBEncoding = THREE.sRGBEncoding;
-          }
-        }
-      } catch (err) {
-        _iterator3.e(err);
-      } finally {
-        _iterator3.f();
-      }
     }
 
-    emptying(textures360);
-    emptying(textures360_daylight);
-    emptying(textures360_night);
-    emptying(textures360_depth); // Create raycast object
+    textureFilter(textures360);
+    textureFilter(textures360_daylight);
+    textureFilter(textures360_night);
+    textureFilter(textures360_depth); // Create raycast object
 
-    var _iterator4 = _createForOfIteratorHelper(pet_array),
+    var _iterator3 = _createForOfIteratorHelper(pet_array),
+        _step3;
+
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var ob = _step3.value;
+        object_ray_array.push(ob);
+      }
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
+    }
+
+    var _iterator4 = _createForOfIteratorHelper(room_array),
         _step4;
 
     try {
       for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var ob = _step4.value;
-        object_ray_array.push(ob);
+        var _ob = _step4.value;
+        object_ray_array.push(_ob);
       }
     } catch (err) {
       _iterator4.e(err);
@@ -45295,19 +45294,7 @@ function () {
       _iterator4.f();
     }
 
-    var _iterator5 = _createForOfIteratorHelper(room_array),
-        _step5;
-
-    try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var _ob = _step5.value;
-        object_ray_array.push(_ob);
-      }
-    } catch (err) {
-      _iterator5.e(err);
-    } finally {
-      _iterator5.f();
-    }
+    tick();
   }, 1000);
 }, // Progress
 function (item_url, item_loaded, item_total) {
@@ -45448,104 +45435,79 @@ canvas.addEventListener('mouseout', function (event) {
 /**
  * Textures
  */
-// 360 Texture
+
+var texture_base_color = null;
+var texture_depth = null; // 360 Texture
 
 var textures360 = [];
 var textures360_daylight = [];
 var textures360_night = [];
-var textures360_depth = [];
-var x = texture_loader.load('231ss', function (a) {
-  console.log(a);
-});
-console.log(x); // console.log(x)
-// Daylight
+var textures360_depth = []; // Daylight
 
-for (var i = 1; i <= increment * increment; i++) {
+var _loop = function _loop(i) {
   var image_number = String(i);
   var update_filename = filename_daylight.substring(0, filename_daylight.length - image_number.length) + image_number;
   var final_filename = update_filename + '.webp';
-
-  try {
+  texture_loader.load(final_filename, function (texture) {
     textures360_daylight[i] = texture_loader.load(final_filename);
-  } catch (err) {
-    break;
-  }
+  }, undefined, function (err) {
+    textures360_daylight[i] = {};
+  });
+};
 
-  textures360[i] = textures360_daylight[i];
+for (var i = 1; i <= increment * increment; i++) {
+  _loop(i);
 } //Night
 
 
+var _loop2 = function _loop2(_i) {
+  var image_number = String(_i);
+  var update_filename = filename_night.substring(0, filename_night.length - image_number.length) + image_number;
+  var final_filename = update_filename + '.webp';
+  texture_loader_wo_load.load(final_filename, function (texture) {
+    textures360_night[_i] = texture_loader_wo_load.load(final_filename);
+  }, undefined, function (err) {
+    textures360_night[_i] = {};
+  });
+};
+
 for (var _i = 1; _i <= increment * increment; _i++) {
-  var _image_number = String(_i);
-
-  var _update_filename = filename_night.substring(0, filename_night.length - _image_number.length) + _image_number;
-
-  var _final_filename = _update_filename + '.webp';
-
-  try {
-    textures360_night[_i] = texture_loader_wo_load.load(_final_filename);
-  } catch (err) {
-    break;
-  }
+  _loop2(_i);
 } //Depth
 
 
+var _loop3 = function _loop3(_i2) {
+  var image_number = String(_i2);
+  var update_filename = filename_depth.substring(0, filename_depth.length - image_number.length) + image_number;
+  var final_filename = update_filename + '.png';
+  texture_loader.load(final_filename, function (texture) {
+    textures360_depth[_i2] = texture_loader.load(final_filename);
+  }, undefined, function (err) {
+    textures360_depth[_i2] = {};
+  });
+};
+
 for (var _i2 = 1; _i2 <= increment * increment; _i2++) {
-  var _image_number2 = String(_i2);
+  _loop3(_i2);
+} // Environment Map
 
-  var _update_filename2 = filename_depth.substring(0, filename_depth.length - _image_number2.length) + _image_number2;
-
-  var _final_filename2 = _update_filename2 + '.png';
-
-  try {
-    textures360_depth[_i2] = texture_loader.load(_final_filename2);
-  } catch (err) {
-    break;
-  }
-} //Load textures
-
-
-var texture_base_color = textures360_daylight[coordinates];
-texture_base_color.minFilter = THREE.NearestFilter;
-texture_base_color.generateMipmaps = false;
-texture_base_color.flipY = false;
-texture_base_color.sRGBEncoding = THREE.sRGBEncoding;
-var texture_depth = textures360_depth[coordinates];
-texture_depth.minFilter = THREE.NearestFilter;
-texture_depth.generateMipmaps = false;
-texture_depth.flipY = false; // Environment Map
 
 var env_texture_daylight = cube_texture_loader.load(['/images/env_daylight/px.jpg', '/images/env_daylight/nx.jpg', '/images/env_daylight/py.jpg', '/images/env_daylight/nx.jpg', '/images/env_daylight/pz.jpg', '/images/env_daylight/nz.jpg']);
 var env_texture_night = cube_texture_loader.load(['/images/env_night/px.jpg', '/images/env_night/nx.jpg', '/images/env_night/py.jpg', '/images/env_night/nx.jpg', '/images/env_night/pz.jpg', '/images/env_night/nz.jpg']);
 /**
  * Material
  */
-// Shader Material
+//Create material
 
-var cursor_material = new THREE.ShaderMaterial({
-  depthTest: false,
-  uniforms: {
-    u_wave: {
-      value: 0
-    },
-    u_opacity: {
-      value: 1
-    }
-  },
-  vertexShader: "\n        varying vec2 vUv;\n\n        void main(){\n            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n            vUv = uv;\n        }\n    ",
-  fragmentShader: "\n        uniform float u_wave;\n        uniform float u_opacity;\n\n        varying vec2 vUv;\n\n        void main(){\n            float value = distance(vUv, vec2(0.5));\n            value -= 0.3 + u_wave * 0.05;\n            value = abs(value);\n            value = step(0.02, value);\n            value = 1.0 - value;\n\n            float opacity = value * u_opacity;\n\n            gl_FragColor = vec4(value,value,value,opacity);\n        }\n    ",
-  transparent: true,
-  side: THREE.DoubleSide
-});
 var material_360_1 = new THREE.ShaderMaterial((_THREE$ShaderMaterial = {
   transparent: true,
   depthWrite: false,
   uniforms: {
     u_texture_depth: {
-      value: texture_depth
+      value: null
     },
     u_texture_base_color: {
-      value: texture_base_color
+      value: null
     },
     u_alpha: {
       value: 1
@@ -45565,10 +45527,10 @@ var material_360_2 = new THREE.ShaderMaterial((_THREE$ShaderMaterial2 = {
   depthWrite: false,
   uniforms: {
     u_texture_depth: {
-      value: texture_depth
+      value: null
     },
     u_texture_base_color: {
-      value: texture_base_color
+      value: null
     },
     u_alpha: {
       value: 0
@@ -45582,7 +45544,23 @@ var material_360_2 = new THREE.ShaderMaterial((_THREE$ShaderMaterial2 = {
   },
   vertexShader: "\n        uniform sampler2D u_texture_depth;\n        uniform float u_mix;\n        uniform float u_displace;\n\n        varying vec2 vUv;\n\n        void main(){\n            vUv = uv;\n            vec4 depth = texture2D(u_texture_depth, vUv);\n            vec3 texture_depth = vec3(depth.x, depth.y, depth.z);\n\n            vec4 modelPosition = modelMatrix * vec4(position + (texture_depth * normal * u_displace), 1.0) ;\n            vec4 viewPosition = viewMatrix * modelPosition;\n            vec4 projectedPosition = projectionMatrix * viewPosition;\n        \n            gl_Position = projectedPosition;\n            \n        }\n    ",
   fragmentShader: "\n        uniform sampler2D u_texture_base_color;\n        uniform float u_alpha;\n        uniform float u_mix;\n\n        varying vec2 vUv;\n\n        void main(){\n            vec4 texture_color = texture2D(u_texture_base_color, vUv);\n\n            gl_FragColor = texture_color;\n            gl_FragColor.a = u_alpha;\n        }\n    "
-}, _defineProperty(_THREE$ShaderMaterial2, "transparent", true), _defineProperty(_THREE$ShaderMaterial2, "side", THREE.DoubleSide), _THREE$ShaderMaterial2)); // Pet Material
+}, _defineProperty(_THREE$ShaderMaterial2, "transparent", true), _defineProperty(_THREE$ShaderMaterial2, "side", THREE.DoubleSide), _THREE$ShaderMaterial2)); // Shader Material
+
+var cursor_material = new THREE.ShaderMaterial({
+  depthTest: false,
+  uniforms: {
+    u_wave: {
+      value: 0
+    },
+    u_opacity: {
+      value: 1
+    }
+  },
+  vertexShader: "\n        varying vec2 vUv;\n\n        void main(){\n            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n            vUv = uv;\n        }\n    ",
+  fragmentShader: "\n        uniform float u_wave;\n        uniform float u_opacity;\n\n        varying vec2 vUv;\n\n        void main(){\n            float value = distance(vUv, vec2(0.5));\n            value -= 0.3 + u_wave * 0.05;\n            value = abs(value);\n            value = step(0.02, value);\n            value = 1.0 - value;\n\n            float opacity = value * u_opacity;\n\n            gl_FragColor = vec4(value,value,value,opacity);\n        }\n    ",
+  transparent: true,
+  side: THREE.DoubleSide
+}); // Pet Material
 
 var pet_material = new THREE.MeshStandardMaterial({
   color: 'white',
@@ -45616,21 +45594,21 @@ pet_lighting.shadow.radius = 15;
 pet_object.add(pet_lighting);
 var mixer;
 gltf_loader.load('/gltf/Pet2.glb', function (gltf) {
-  var _iterator6 = _createForOfIteratorHelper(gltf.scene.children),
-      _step6;
+  var _iterator5 = _createForOfIteratorHelper(gltf.scene.children),
+      _step5;
 
   try {
-    for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-      var children = _step6.value;
+    for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+      var children = _step5.value;
       pet_array.push(children);
       children.castShadow = true;
       children.receiveShadow = true;
       children.material = pet_material;
     }
   } catch (err) {
-    _iterator6.e(err);
+    _iterator5.e(err);
   } finally {
-    _iterator6.f();
+    _iterator5.f();
   }
 
   var model = gltf.scene;
@@ -45658,12 +45636,12 @@ gltf_loader.load('/gltf/Pet2.glb', function (gltf) {
 
 var room_array = [];
 gltf_loader.load('/gltf/Room.glb', function (gltf) {
-  var _iterator7 = _createForOfIteratorHelper(gltf.scene.children),
-      _step7;
+  var _iterator6 = _createForOfIteratorHelper(gltf.scene.children),
+      _step6;
 
   try {
-    for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-      var children = _step7.value;
+    for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+      var children = _step6.value;
 
       if (!(children.name.toLowerCase() == 'boundary')) {
         children.receiveShadow = true;
@@ -45674,9 +45652,9 @@ gltf_loader.load('/gltf/Room.glb', function (gltf) {
       room_array.push(children);
     }
   } catch (err) {
-    _iterator7.e(err);
+    _iterator6.e(err);
   } finally {
-    _iterator7.f();
+    _iterator6.f();
   }
 
   scene.add(gltf.scene);
@@ -46232,12 +46210,12 @@ function tick() {
   raycaster_mouse.setFromCamera(mouse, camera);
   var intersects = raycaster_mouse.intersectObjects(object_ray_array, true);
 
-  var _iterator8 = _createForOfIteratorHelper(intersects),
-      _step8;
+  var _iterator7 = _createForOfIteratorHelper(intersects),
+      _step7;
 
   try {
-    for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-      var intersect = _step8.value;
+    for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+      var intersect = _step7.value;
 
       //Update Plane
       if (intersects.length > 0) {
@@ -46260,9 +46238,9 @@ function tick() {
     } // Update Renderer
 
   } catch (err) {
-    _iterator8.e(err);
+    _iterator7.e(err);
   } finally {
-    _iterator8.f();
+    _iterator7.f();
   }
 
   renderer.render(scene, camera);
@@ -46275,12 +46253,12 @@ var dragged = false;
 var is_mouse_on_button = false;
 var button_element = document.querySelectorAll('.button');
 
-var _iterator9 = _createForOfIteratorHelper(button_element),
-    _step9;
+var _iterator8 = _createForOfIteratorHelper(button_element),
+    _step8;
 
 try {
-  for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-    var button = _step9.value;
+  for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+    var button = _step8.value;
     button.addEventListener('mouseover', function () {
       is_mouse_on_button = true;
     });
@@ -46289,9 +46267,9 @@ try {
     });
   }
 } catch (err) {
-  _iterator9.e(err);
+  _iterator8.e(err);
 } finally {
-  _iterator9.f();
+  _iterator8.f();
 }
 
 window.addEventListener('mousedown', function () {
@@ -46308,90 +46286,88 @@ window.addEventListener('mouseup', function () {
 
   var intersects = raycaster_mouse.intersectObjects(room_array, true);
 
-  var _iterator10 = _createForOfIteratorHelper(intersects),
-      _step10;
+  var _iterator9 = _createForOfIteratorHelper(intersects),
+      _step9;
 
   try {
-    for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-      var intersect = _step10.value;
+    for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+      var intersect = _step9.value;
 
       // Teleport to object raycast
-      try {
-        if (intersect.object.name.toLowerCase() != 'boundary' && !is_transitioning && !wasd_mode && !is_mouse_on_button && !is_mouse_on_pet) {
-          var hit_x = Math.round(intersects[0].point.x);
-          var hit_z = Math.round(intersects[0].point.z);
-          coordinates = base_coordinate + (hit_x - base_position.x) * grid - (hit_z - base_position.z) * increment;
-          texture_base_color = textures360[coordinates];
-          texture_depth = textures360_depth[coordinates];
+      if (intersect.object.name.toLowerCase() != 'boundary' && !is_transitioning && !wasd_mode && !is_mouse_on_button && !is_mouse_on_pet) {
+        var hit_x = Math.round(intersects[0].point.x);
+        var hit_z = Math.round(intersects[0].point.z);
+        coordinates = base_coordinate + (hit_x - base_position.x) * grid - (hit_z - base_position.z) * increment;
+        texture_base_color = textures360[coordinates];
+        texture_depth = textures360_depth[coordinates];
 
-          if (texture_base_color.image && texture_depth.image) {
-            is_transitioning = true;
-            material_360_1.uniforms.u_displace.value = -displace_strength;
-            material_360_2.uniforms.u_displace.value = -displace_strength;
+        if (texture_base_color.image && texture_depth.image) {
+          is_transitioning = true;
+          material_360_1.uniforms.u_displace.value = -displace_strength;
+          material_360_2.uniforms.u_displace.value = -displace_strength;
 
-            _gsap.default.to(camera.position, {
-              x: hit_x,
-              z: hit_z,
-              duration: 2
+          _gsap.default.to(camera.position, {
+            x: hit_x,
+            z: hit_z,
+            duration: 2
+          });
+
+          if (flip_flop % 2 == 0) {
+            material_360_2.uniforms.u_texture_base_color.value = texture_base_color;
+            material_360_2.uniforms.u_texture_depth.value = texture_depth;
+            material_360_2.depthWrite = true;
+            material_360_1.depthWrite = false;
+            sphere_mesh2.position.x = hit_x;
+            sphere_mesh2.position.z = hit_z;
+
+            _gsap.default.to(material_360_2.uniforms.u_alpha, {
+              duration: 1,
+              value: 1,
+              delay: 0.5
             });
 
-            if (flip_flop % 2 == 0) {
-              material_360_2.uniforms.u_texture_base_color.value = texture_base_color;
-              material_360_2.uniforms.u_texture_depth.value = texture_depth;
-              material_360_2.depthWrite = true;
-              material_360_1.depthWrite = false;
-              sphere_mesh2.position.x = hit_x;
-              sphere_mesh2.position.z = hit_z;
+            _gsap.default.to(material_360_1.uniforms.u_alpha, {
+              duration: 0.1,
+              value: 0,
+              delay: 1.4,
+              onComplete: function onComplete() {
+                is_transitioning = false;
+              }
+            });
 
-              _gsap.default.to(material_360_2.uniforms.u_alpha, {
-                duration: 1,
-                value: 1,
-                delay: 0.5
-              });
+            flip_flop += 1;
+          } else {
+            material_360_1.uniforms.u_texture_base_color.value = texture_base_color;
+            material_360_1.uniforms.u_texture_depth.value = texture_depth;
+            material_360_1.depthWrite = true;
+            material_360_2.depthWrite = false;
+            sphere_mesh1.position.x = hit_x;
+            sphere_mesh1.position.z = hit_z;
 
-              _gsap.default.to(material_360_1.uniforms.u_alpha, {
-                duration: 0.1,
-                value: 0,
-                delay: 1.4,
-                onComplete: function onComplete() {
-                  is_transitioning = false;
-                }
-              });
+            _gsap.default.to(material_360_1.uniforms.u_alpha, {
+              duration: 1,
+              value: 1,
+              delay: 0.5
+            });
 
-              flip_flop += 1;
-            } else {
-              material_360_1.uniforms.u_texture_base_color.value = texture_base_color;
-              material_360_1.uniforms.u_texture_depth.value = texture_depth;
-              material_360_1.depthWrite = true;
-              material_360_2.depthWrite = false;
-              sphere_mesh1.position.x = hit_x;
-              sphere_mesh1.position.z = hit_z;
+            _gsap.default.to(material_360_2.uniforms.u_alpha, {
+              duration: 0.1,
+              value: 0,
+              delay: 1.4,
+              onComplete: function onComplete() {
+                is_transitioning = false;
+              }
+            });
 
-              _gsap.default.to(material_360_1.uniforms.u_alpha, {
-                duration: 1,
-                value: 1,
-                delay: 0.5
-              });
-
-              _gsap.default.to(material_360_2.uniforms.u_alpha, {
-                duration: 0.1,
-                value: 0,
-                delay: 1.4,
-                onComplete: function onComplete() {
-                  is_transitioning = false;
-                }
-              });
-
-              flip_flop += 1;
-            }
+            flip_flop += 1;
           }
         }
-      } catch (err) {}
+      }
     }
   } catch (err) {
-    _iterator10.e(err);
+    _iterator9.e(err);
   } finally {
-    _iterator10.f();
+    _iterator9.f();
   }
 });
 /**
@@ -46409,9 +46385,6 @@ window.addEventListener('resize', function () {
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
-window.setTimeout(function () {
-  tick();
-}, 2000);
 },{"three":"../node_modules/three/build/three.module.js","gsap":"../node_modules/gsap/index.js","three/examples/jsm/loaders/GLTFLoader.js":"../node_modules/three/examples/jsm/loaders/GLTFLoader.js","three/examples/jsm/controls/DeviceOrientationControls.js":"../node_modules/three/examples/jsm/controls/DeviceOrientationControls.js","three/examples/jsm/controls/PointerLockControls.js":"../node_modules/three/examples/jsm/controls/PointerLockControls.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -46440,7 +46413,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56145" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55078" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

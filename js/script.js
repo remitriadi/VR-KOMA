@@ -58,33 +58,38 @@ let is_mouse_on_pet = false
                 for(const ui of ui_element){
                     ui.style.opacity = 0.9
                 }
+
+            //Load textures
+            texture_base_color = textures360_daylight[coordinates]
+            texture_depth = textures360_depth[coordinates]
+  
             
-            // Emptying texture if file isn't in folder
-            function emptying(texture_array){
-                count = 0
-                for(const texture of texture_array){
-                    if(texture){
-                        if(!texture.image){
-                            texture_array[count] = null
-                        }
-                    }
-                    count += 1
-                }
-                for(const texture of texture_array){
-                    if(texture){
-                        texture.minFilter = THREE.NearestFilter
-                        texture.generateMipmaps = false
-                        texture.flipY = false
-                        texture.sRGBEncoding = THREE.sRGBEncoding
+            textures360 = [...textures360_daylight]
+
+            material_360_1.uniforms.u_texture_base_color.value = textures360[coordinates]
+            material_360_2.uniforms.u_texture_base_color.value = textures360[coordinates]
+
+            material_360_1.uniforms.u_texture_depth.value = textures360_depth[coordinates]
+            material_360_2.uniforms.u_texture_depth.value = textures360_depth[coordinates]
+            
+
+            //Filter all textures
+            function textureFilter(array){
+                for(const tex of array){
+                    if(tex){
+                        tex.minFilter = THREE.NearestFilter
+                        tex.generateMipmaps = false
+                        tex.flipY = false
+                        tex.sRGBEncoding = THREE.sRGBEncoding
                     }
                 }
             }
 
-            emptying(textures360)
-            emptying(textures360_daylight)
-            emptying(textures360_night)
-            emptying(textures360_depth)
-
+            textureFilter(textures360)
+            textureFilter(textures360_daylight)
+            textureFilter(textures360_night)
+            textureFilter(textures360_depth)
+            
 
             // Create raycast object
             for(const ob of pet_array){
@@ -93,6 +98,8 @@ let is_mouse_on_pet = false
             for(const ob of room_array){
                 object_ray_array.push(ob)
             }
+
+            tick()
             
         }, 1000
         )   
@@ -258,46 +265,45 @@ canvas.addEventListener('mouseout', function(event){
  * Textures
  */
 
+let texture_base_color = null
+let texture_depth = null
+
 // 360 Texture
-const textures360 = []
+let textures360 = []
 const textures360_daylight = []
 const textures360_night = []
 const textures360_depth = []
-
-
-
-const x = texture_loader.load('231ss',function(a){
-    console.log(a)
-})
-console.log(x)
-// console.log(x)
 
 // Daylight
 for(let i = 1; i <= (increment * increment); i++){
     const image_number = String(i)
     const update_filename = filename_daylight.substring(0, filename_daylight.length - image_number.length) + image_number
     const final_filename = update_filename + '.webp'
-    try{
-        textures360_daylight[i] = texture_loader.load(final_filename) 
-    }
-    catch(err){
-        break
-    }
-    textures360[i] = textures360_daylight[i]
+    texture_loader.load(
+        final_filename,
+        (texture)=>{
+            textures360_daylight[i] = texture_loader.load(final_filename)
+        },
+        undefined,
+        (err)=>{
+            textures360_daylight[i] = {}
+        })
 }
-
 
 //Night
 for(let i = 1; i <= (increment * increment); i++){
     const image_number = String(i)
     const update_filename = filename_night.substring(0, filename_night.length - image_number.length) + image_number
     const final_filename = update_filename + '.webp'
-    try{
-        textures360_night[i] = texture_loader_wo_load.load(final_filename)  
-    }
-    catch(err){
-        break
-    }
+    texture_loader_wo_load.load(
+        final_filename,
+        (texture)=>{
+            textures360_night[i] = texture_loader_wo_load.load(final_filename)
+        },
+        undefined,
+        (err)=>{
+            textures360_night[i] = {}
+        })
 }
 
 //Depth
@@ -305,25 +311,17 @@ for(let i = 1; i <= (increment * increment); i++){
     const image_number = String(i)
     const update_filename = filename_depth.substring(0, filename_depth.length - image_number.length) + image_number
     const final_filename = update_filename + '.png'
-    try{
-        textures360_depth[i] = texture_loader.load(final_filename)
-    }
-    catch(err){
-        break
-    }
+    texture_loader.load(
+        final_filename,
+        (texture)=>{
+            textures360_depth[i] = texture_loader.load(final_filename)
+        },
+        undefined,
+        (err)=>{
+            textures360_depth[i] = {}
+        })
+
 }
-
-//Load textures
-let texture_base_color = textures360_daylight[coordinates]
-texture_base_color.minFilter = THREE.NearestFilter
-texture_base_color.generateMipmaps = false
-texture_base_color.flipY = false
-texture_base_color.sRGBEncoding = THREE.sRGBEncoding
-
-let texture_depth = textures360_depth[coordinates]
-texture_depth.minFilter = THREE.NearestFilter
-texture_depth.generateMipmaps = false
-texture_depth.flipY = false
 
 // Environment Map
 const env_texture_daylight = cube_texture_loader.load([
@@ -347,50 +345,13 @@ const env_texture_night = cube_texture_loader.load([
 /**
  * Material
  */
-
-// Shader Material
-const cursor_material = new THREE.ShaderMaterial({
-    depthTest: false,
-    uniforms:{
-        u_wave: {value: 0},
-        u_opacity: {value: 1}
-    },
-    vertexShader:`
-        varying vec2 vUv;
-
-        void main(){
-            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-            vUv = uv;
-        }
-    `,
-    fragmentShader:`
-        uniform float u_wave;
-        uniform float u_opacity;
-
-        varying vec2 vUv;
-
-        void main(){
-            float value = distance(vUv, vec2(0.5));
-            value -= 0.3 + u_wave * 0.05;
-            value = abs(value);
-            value = step(0.02, value);
-            value = 1.0 - value;
-
-            float opacity = value * u_opacity;
-
-            gl_FragColor = vec4(value,value,value,opacity);
-        }
-    `,
-    transparent: true,
-    side: THREE.DoubleSide
-})
-
+//Create material
 const material_360_1 = new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
     uniforms:{
-        u_texture_depth: {value: texture_depth},
-        u_texture_base_color: {value: texture_base_color},
+        u_texture_depth: {value: null},
+        u_texture_base_color: {value: null},
         u_alpha: {value:1},
         u_mix: {value:0},
         u_displace: {value: 0},
@@ -438,8 +399,8 @@ const material_360_2 = new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
     uniforms:{
-        u_texture_depth: {value: texture_depth},
-        u_texture_base_color: {value: texture_base_color},
+        u_texture_depth: {value: null},
+        u_texture_base_color: {value: null},
         u_alpha: {value:0},
         u_mix: {value:0},
         u_displace: {value: 0},
@@ -476,6 +437,43 @@ const material_360_2 = new THREE.ShaderMaterial({
 
             gl_FragColor = texture_color;
             gl_FragColor.a = u_alpha;
+        }
+    `,
+    transparent: true,
+    side: THREE.DoubleSide
+})
+
+// Shader Material
+const cursor_material = new THREE.ShaderMaterial({
+    depthTest: false,
+    uniforms:{
+        u_wave: {value: 0},
+        u_opacity: {value: 1}
+    },
+    vertexShader:`
+        varying vec2 vUv;
+
+        void main(){
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+            vUv = uv;
+        }
+    `,
+    fragmentShader:`
+        uniform float u_wave;
+        uniform float u_opacity;
+
+        varying vec2 vUv;
+
+        void main(){
+            float value = distance(vUv, vec2(0.5));
+            value -= 0.3 + u_wave * 0.05;
+            value = abs(value);
+            value = step(0.02, value);
+            value = 1.0 - value;
+
+            float opacity = value * u_opacity;
+
+            gl_FragColor = vec4(value,value,value,opacity);
         }
     `,
     transparent: true,
@@ -1143,7 +1141,6 @@ let is_transitioning = false
 let dragged = false
 let is_mouse_on_button = false
 
-
 const button_element = document.querySelectorAll('.button')
 for(const button of button_element){
     button.addEventListener('mouseover',function(){ is_mouse_on_button = true })
@@ -1157,65 +1154,61 @@ window.addEventListener('mouseup', function() {
         const intersects = raycaster_mouse.intersectObjects(room_array, true)
         for(const intersect of intersects){
             // Teleport to object raycast
-            try{
-                if(intersect.object.name.toLowerCase() != 'boundary' && !is_transitioning && !wasd_mode && !is_mouse_on_button && !is_mouse_on_pet){
-                    const hit_x = Math.round(intersects[0].point.x)
-                    const hit_z = Math.round(intersects[0].point.z)
-                    
-                    coordinates = base_coordinate + ((hit_x - base_position.x) * grid) - ((hit_z - base_position.z) * increment)
-    
-                    texture_base_color = textures360[coordinates]
-                    texture_depth = textures360_depth[coordinates]
- 
-                    if(texture_base_color.image && texture_depth.image){
-                        is_transitioning = true
-     
-                        material_360_1.uniforms.u_displace.value = -displace_strength
-                        material_360_2.uniforms.u_displace.value = -displace_strength
-    
-                        gsap.to(camera.position, { x: hit_x, z: hit_z, duration: 2})
-    
-                        if (flip_flop % 2 == 0){
-                            material_360_2.uniforms.u_texture_base_color.value = texture_base_color
-                            material_360_2.uniforms.u_texture_depth.value = texture_depth
-
-                            material_360_2.depthWrite = true
-                            material_360_1.depthWrite = false
-            
-                            sphere_mesh2.position.x = hit_x
-                            sphere_mesh2.position.z = hit_z
-    
-        
-                            gsap.to(material_360_2.uniforms.u_alpha, {duration: 1, value: 1, delay: 0.5})
-                            gsap.to(material_360_1.uniforms.u_alpha, {duration: 0.1, value: 0, delay: 1.4, onComplete: function(){
-                                is_transitioning = false
-                            }})
-                            flip_flop += 1
-                        }
-                        else{
-    
-                            material_360_1.uniforms.u_texture_base_color.value = texture_base_color
-                            material_360_1.uniforms.u_texture_depth.value = texture_depth
-
-                            material_360_1.depthWrite = true
-                            material_360_2.depthWrite = false
-            
-                            sphere_mesh1.position.x = hit_x
-                            sphere_mesh1.position.z = hit_z
-    
+            if(intersect.object.name.toLowerCase() != 'boundary' && !is_transitioning && !wasd_mode && !is_mouse_on_button && !is_mouse_on_pet){
+                const hit_x = Math.round(intersects[0].point.x)
+                const hit_z = Math.round(intersects[0].point.z)
                 
-                            gsap.to(material_360_1.uniforms.u_alpha, {duration: 1, value: 1, delay: 0.5})
-                            gsap.to(material_360_2.uniforms.u_alpha, {duration: 0.1, value: 0, delay: 1.4, onComplete: function(){
-                                is_transitioning = false
-                            }})
-                            flip_flop += 1
-                        }
+                coordinates = base_coordinate + ((hit_x - base_position.x) * grid) - ((hit_z - base_position.z) * increment)
+
+                texture_base_color = textures360[coordinates]
+                texture_depth = textures360_depth[coordinates]
+
+                if(texture_base_color.image && texture_depth.image){
+                    is_transitioning = true
+    
+                    material_360_1.uniforms.u_displace.value = -displace_strength
+                    material_360_2.uniforms.u_displace.value = -displace_strength
+
+                    gsap.to(camera.position, { x: hit_x, z: hit_z, duration: 2})
+
+                    if (flip_flop % 2 == 0){
+                        material_360_2.uniforms.u_texture_base_color.value = texture_base_color
+                        material_360_2.uniforms.u_texture_depth.value = texture_depth
+
+                        material_360_2.depthWrite = true
+                        material_360_1.depthWrite = false
+        
+                        sphere_mesh2.position.x = hit_x
+                        sphere_mesh2.position.z = hit_z
+
+    
+                        gsap.to(material_360_2.uniforms.u_alpha, {duration: 1, value: 1, delay: 0.5})
+                        gsap.to(material_360_1.uniforms.u_alpha, {duration: 0.1, value: 0, delay: 1.4, onComplete: function(){
+                            is_transitioning = false
+                        }})
+                        flip_flop += 1
+                    }
+                    else{
+
+                        material_360_1.uniforms.u_texture_base_color.value = texture_base_color
+                        material_360_1.uniforms.u_texture_depth.value = texture_depth
+
+                        material_360_1.depthWrite = true
+                        material_360_2.depthWrite = false
+        
+                        sphere_mesh1.position.x = hit_x
+                        sphere_mesh1.position.z = hit_z
+
+            
+                        gsap.to(material_360_1.uniforms.u_alpha, {duration: 1, value: 1, delay: 0.5})
+                        gsap.to(material_360_2.uniforms.u_alpha, {duration: 0.1, value: 0, delay: 1.4, onComplete: function(){
+                            is_transitioning = false
+                        }})
+                        flip_flop += 1
                     }
                 }
             }
-            catch(err){
-
-            }
+            
         }
 
 })
@@ -1240,9 +1233,7 @@ window.addEventListener('resize', function(){
 })
 
 
-window.setTimeout(function (){
-    tick()
-}, 2000)
+
 
 
 

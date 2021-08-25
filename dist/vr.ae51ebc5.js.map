@@ -1,1 +1,1 @@
-{"version":3,"sources":["../js/vr.js"],"names":["document","querySelector","addEventListener","console","log"],"mappings":"AAAAA,QAAQ,CAACC,aAAT,CAAuB,cAAvB,EAAuCC,gBAAvC,CAAwD,OAAxD,EAAgE,YAAU;AACtEC,EAAAA,OAAO,CAACC,GAAR,CAAY,KAAZ;AACH,CAFD","file":"vr.ae51ebc5.js","sourceRoot":"..\\html","sourcesContent":["document.querySelector('#four-season').addEventListener('click',function(){\r\n    console.log('yes')\r\n})"]}
+{"version":3,"sources":[],"names":[],"mappings":"","file":"vr.ae51ebc5.js","sourceRoot":"..\\html","sourcesContent":[]}
