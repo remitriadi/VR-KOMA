@@ -118,49 +118,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"../js/index.js":[function(require,module,exports) {
-var __dirname = "D:\\RESEARCH\\007-VR WebGL\\CODE - Copy\\js";
-console.log(__dirname);
-
-function testFileExists(src, successFunc, failFunc) {
-  var xhr = new XMLHttpRequest();
-  console.log(xhr);
-
-  xhr.onreadystatechange = function () {
-    console.log(this);
-
-    if (this.readyState === this.DONE) {
-      if (xhr.status === 200) {
-        successFunc(xhr);
-      } else {
-        failFunc(xhr);
-      }
-    }
-  }; // xhr.error = function() {
-  //     failFunc(xhr);
-  // }
-  // xhr.onabort = function() {
-  //     failFunc(xhr);
-  // }
-  // xhr.timeout = function() {
-  //     failFunc(xhr);
-  // }
-
-
-  xhr.timeout = 5000; // TIMEOUT SET TO PREFERENCE (5 SEC)
-
-  xhr.open('HEAD', src, true);
-  xhr.send(null); // VERY IMPORTANT
-}
-
-function fileExists(xhr) {
-  alert("File exists !!  Yay !!");
-}
-
-function fileNotFound(xhr) {
-  alert("Cannot find the file, bummer");
-}
-
-testFileExists("asd.html", fileExists, fileNotFound);
+var img = new Image(200, 300);
+img.src = 'https://www.google.com/images/srpr/logo4w.png';
+console.log(img);
 window.setTimeout(function () {
   document.querySelector('.image--container img').style.opacity = 1;
   document.querySelector('.dashboard-top-left').style.opacity = 1;
@@ -193,7 +153,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55078" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53940" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
