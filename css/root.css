@@ -1,0 +1,211 @@
+/* Fonts */
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_black_italic-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_black_italic-webfont.woff") format("woff");
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_black-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_black-webfont.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_bold_italic-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_bold_italic-webfont.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_bold-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_bold-webfont.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_medium_italic-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_medium_italic-webfont.woff") format("woff");
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_medium-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_medium-webfont.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_regular_italic-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_regular_italic-webfont.woff") format("woff");
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_regular-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_regular-webfont.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_light_italic-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_light_italic-webfont.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_light-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_light-webfont.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_thin_italic-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_thin_italic-webfont.woff") format("woff");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_thin-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_thin-webfont.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_hairline_italic-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_hairline_italic-webfont.woff") format("woff");
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "sailec";
+  src: url("fonts/sailec/sailec_hairline-webfont.woff2") format("woff2"),
+    url("fonts/sailec/sailec_hairline-webfont.woff") format("woff");
+  font-weight: 200;
+  font-style: normal;
+}
+
+:root {
+  --color-primary: #d6d6d4;
+  --color-secondary: #b9a688;
+  --color-accent: #e2c79e;
+  --color-body-darker: #323232;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "sailec";
+  box-sizing: border-box;
+  height: 100vh;
+  padding: 0;
+}
+
+/* Links */
+.link {
+  text-decoration: none;
+}
+
+/* Background */
+
+.background__grey {
+  background-color: var(--color-body-darker);
+}
+
+/* Text */
+
+.text--wrap {
+  display: flex;
+  justify-content: center;
+  min-height: 315px;
+}
+
+.text--container {
+  transform: translateX(-12rem);
+  margin-top: 8rem;
+  margin-bottom: 2rem;
+  max-width: 700px;
+}
+
+.text__primary {
+  color: var(--color-primary);
+}
+.text__bold {
+  font-weight: 600;
+}
+
+.text__heading2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 3.8rem;
+  margin-top: 0rem;
+}
+
+.text__heading3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.text__paragraph {
+  text-align: justify;
+  margin-top: 0;
+  line-height: 1.5;
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+
+/* Content */
+.main--content {
+  position: absolute;
+  margin-top: 0rem;
+}
+
+.visibility-transition {
+  opacity: 0;
+  transition: opacity 2s;
+}
+
+iframe {
+  width: 100%;
+  height: 100vh;
+}
+
+hr {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+  border: none;
+  background-color: var(--color-primary);
+  height: 0.5px;
+  margin-left: 0;
+  text-align: left;
+  width: 40%;
+}

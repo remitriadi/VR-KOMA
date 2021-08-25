@@ -1,0 +1,28 @@
+{
+  "name": "parcel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel html/index.html",
+    "build": "parcel build html/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "staticFiles": {
+    "staticPath": "public",
+    "watcherGlob": "**"
+  },
+  "devDependencies": {
+    "gsap": "^3.7.1",
+    "parcel-bundler": "^1.12.5",
+    "parcel-plugin-static-files-copy": "^2.6.0",
+    "three": "^0.131.3"
+  },
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "public": "^0.1.5"
+  }
+}

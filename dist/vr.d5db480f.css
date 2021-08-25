@@ -1,0 +1,57 @@
+/* Image */
+
+.image--wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.image--container {
+  margin: 1rem 0;
+  height: 330px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-primary);
+}
+
+.image--container img {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  opacity: 0.2;
+}
+
+.image--text {
+  transform: translateX(-5rem);
+  position: absolute;
+}
+
+.image--heading {
+  cursor: pointer;
+  letter-spacing: 30px;
+  font-weight: 300;
+  font-size: 5rem;
+  transition: text-shadow 0.3s;
+}
+
+.image--heading:hover {
+  text-shadow: 0 0 5px #fff;
+}
+
+.image--line {
+  font-size: 2rem;
+}
+
+.image--project-name {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+}
+.image--client-name {
+  margin-top: 0.5rem;
+  font-weight: 200;
+}
+
+
+/*# sourceMappingURL=/vr.d5db480f.css.map */

@@ -1,0 +1,25 @@
+body {
+  overflow: hidden;
+}
+
+.image--container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.image--container img {
+  transform: translateY(10px);
+  height: 900px;
+}
+
+.image--container img,
+.dashboard-top-left {
+  opacity: 0;
+  transition: opacity 4s;
+}
+
+
+/*# sourceMappingURL=/css.9e29eda8.css.map */
